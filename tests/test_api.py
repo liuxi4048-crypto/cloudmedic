@@ -10,6 +10,7 @@ def make_client() -> TestClient:
 def test_healthz():
     with make_client() as client:
         assert client.get("/healthz").json() == {"status": "ok"}
+        assert client.get("/health").json() == {"status": "ok"}
 
 
 def test_state_and_inject_reset():

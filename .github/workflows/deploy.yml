@@ -61,6 +61,6 @@ jobs:
             --project "${{ secrets.GCP_PROJECT_ID }}" --region "$REGION" \
             --format 'value(status.url)')
           echo "Deployed: $URL"
-          curl -fsS "$URL/healthz"
+          curl -fsS "$URL/health"
           curl -fsS "$URL/api/state" > /dev/null
           echo "Smoke test passed ✅"

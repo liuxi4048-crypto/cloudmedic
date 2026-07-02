@@ -45,6 +45,9 @@ async def index():
     return FileResponse(STATIC_DIR / "index.html")
 
 
+# 注: run.app ドメインでは素の /healthz はGoogleフロントエンドに
+# 横取りされ404になるため、/health を正とする（/healthz はローカル互換用）
+@app.get("/health")
 @app.get("/healthz")
 async def healthz():
     return {"status": "ok"}
