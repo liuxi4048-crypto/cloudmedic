@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudMedic 🩺 — 自律SREエージェント</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo">🩺</span>
+    <div>
+      <h1>CloudMedic</h1>
+      <p class="tagline">Cloud Run上のサービスを自律診察・処置するSREエージェント</p>
+    </div>
+  </div>
+  <div class="mode-switch">
+    <span class="mode-label">対応モード</span>
+    <div class="segmented" id="mode-segmented">
+      <button data-mode="auto" class="active" title="エージェントが処置まで全自動で実行">⚡ 自動対応</button>
+      <button data-mode="manual" title="処置の前に人間の承認を求める">🙋 承認モード</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="column left">
+    <div class="card" id="patient-card">
+      <div class="card-title">
+        <h2>🏪 患者サービス</h2>
+        <span class="badge" id="patient-status">—</span>
+      </div>
+      <div class="patient-meta">
+        <div><span class="k">サービス</span><span class="v" id="patient-name">—</span></div>
+        <div><span class="k">バージョン</span><span class="v mono" id="patient-version">—</span></div>
+        <div><span class="k">インスタンス</span><span class="v" id="patient-instances">—</span></div>
+        <div><span class="k">フェイルセーフ</span><span class="v" id="patient-failsafe">—</span></div>
+      </div>
+      <div id="active-faults"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h2>💉 障害を注入（デモ）</h2></div>
+      <p class="hint">ボタンを押すと患者に障害が発生し、ウォッチドッグが検知すると
+        エージェントが自律的に対応を始めます。</p>
+      <div class="inject-grid" id="inject-buttons"></div>
+      <button class="btn-reset" id="btn-reset">🔄 患者を初期状態に戻す</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h2>📈 バイタルサイン</h2><span class="hint">直近30秒</span></div>
+      <div class="vitals-grid">
+        <div class="vital"><span class="vital-value" id="v-error">—</span><span class="vital-label">エラー率</span></div>
+        <div class="vital"><span class="vital-value" id="v-p95">—</span><span class="vital-label">p95レイテンシ</span></div>
+        <div class="vital"><span class="vital-value" id="v-rpm">—</span><span class="vital-label">req/分</span></div>
+        <div class="vital"><span class="vital-value" id="v-mem">—</span><span class="vital-label">メモリ</span></div>
+      </div>
+      <canvas id="vitals-chart" width="560" height="120"></canvas>
+      <div class="chart-legend">
+        <span><i class="dot dot-error"></i>エラー率%</span>
+        <span><i class="dot dot-latency"></i>p95 (ms/20)</span>
+        <span><i class="dot dot-memory"></i>メモリ (MB/10)</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="column right">
+    <div class="card feed-card">
+      <div class="card-title">
+        <h2>🧠 エージェントの対応ログ</h2>
+        <span class="badge" id="incident-status">待機中</span>
+      </div>
+      <div id="agent-feed">
+        <div class="feed-empty" id="feed-empty">
+          インシデントはありません。左の「障害を注入」から始めるか、
+          <button class="link-btn" id="btn-manual-trigger">手動で診察をリクエスト</button>できます。
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="postmortem-card" style="display:none">
+      <div class="card-title"><h2>📋 ポストモーテム</h2>
+        <button class="link-btn" id="btn-copy-pm">コピー</button></div>
+      <div id="postmortem-body" class="markdown"></div>
+    </div>
+
+    <div class="card history-card">
+      <div class="card-title"><h2>🗂 インシデント履歴</h2></div>
+      <div id="incident-history"><p class="hint">まだ履歴はありません。</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  CloudMedic — DevOps × AI Agent Hackathon 2026 提出作品 ·
+  Cloud Run + Gemini + GitHub Actions
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
