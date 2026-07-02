@@ -117,6 +117,8 @@ class ScriptedLLM:
     def make_function_response(self, name: str, response: Any):
         f = self.facts
         if name == "get_vital_signs":
+            if f["vitals"] is None:
+                f["initial_vitals"] = response  # 障害発生時のバイタル（レポート用）
             f["vitals"] = response
         elif name == "search_logs":
             logs = response if isinstance(response, list) else response.get("logs", [])
@@ -132,7 +134,9 @@ class ScriptedLLM:
             pass  # treatments_tried は step() 側で記録済み
         elif name == "verify_recovery":
             f["verify_count"] += 1
-            f["recovered"] = bool(response.get("recovered")) if isinstance(response, dict) else False
+            f["recovered"] = (
+                bool(response.get("recovered")) if isinstance(response, dict) else False
+            )
             if isinstance(response, dict) and response.get("vitals"):
                 f["vitals"] = response["vitals"]
         elif name == "write_postmortem":
@@ -196,7 +200,7 @@ class ScriptedLLM:
 
     def _postmortem_args(self) -> dict:
         f = self.facts
-        vitals = f["vitals"] or {}
+        vitals = f.get("initial_vitals") or f["vitals"] or {}
         _, cause, _ = self._diagnose_for_report()
         tried = "、".join(f["treatments_tried"]) or "なし"
         return {

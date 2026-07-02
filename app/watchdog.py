@@ -67,6 +67,16 @@ async def watchdog(ctx: AppContext) -> None:
             if ctx.agent_busy():
                 consecutive_bad = 0
                 continue
+            # 直前のインシデントが自動対応で回復できなかった場合は、
+            # 同じ障害に対してインシデントを乱発しない（クールダウン）
+            if ctx.incident_order:
+                last = ctx.incidents[ctx.incident_order[-1]]
+                if (
+                    last.status == "failed"
+                    and last.resolved_at
+                    and time.time() - last.resolved_at < 90
+                ):
+                    continue
             vitals = ctx.patient.vitals(window_seconds=10)
             if vitals["request_count"] >= 5 and vitals["status"] == "degraded":
                 consecutive_bad += 1

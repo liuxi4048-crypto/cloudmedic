@@ -12,9 +12,9 @@
 [Cloud Shell](https://shell.cloud.google.com) を開き、以下を実行します。
 
 ```bash
-git clone https://github.com/<あなたのユーザー名>/cloudmedic.git
+git clone https://github.com/liuxi4048-crypto/cloudmedic.git
 cd cloudmedic/infra
-export GITHUB_REPO="<あなたのユーザー名>/cloudmedic"
+export GITHUB_REPO="liuxi4048-crypto/cloudmedic"
 export BILLING_ACCOUNT="0129BB-69E434-CEFFD5"
 bash setup.sh
 ```

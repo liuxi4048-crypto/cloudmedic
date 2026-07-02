@@ -32,6 +32,12 @@ def test_error_storm_and_failsafe():
     # 二重適用は拒否される
     assert p.treat("activate_failsafe")["applied"] is False
 
+    # 再度エラーストームが発生したら、ブレーカーは閉じた状態から再開
+    # （フェイルセーフによる回復が再び可能）
+    p.inject("error_storm")
+    assert p.failsafe_active is False
+    assert p.treat("activate_failsafe")["applied"] is True
+
 
 def test_bad_deploy_and_rollback():
     p = make_patient()

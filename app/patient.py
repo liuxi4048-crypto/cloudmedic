@@ -107,6 +107,9 @@ class Patient:
         if fault not in FAULT_TYPES:
             raise ValueError(f"unknown fault: {fault}")
         self.active_faults.add(fault)
+        if fault == "error_storm":
+            # 新たな外部API障害の発生 = 前回のサーキットブレーカーは閉じている状態から始める
+            self.failsafe_active = False
         if fault == "bad_deploy":
             self.version = "v1.4.0"
             self.deploy_history.append(DeployRecord(

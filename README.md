@@ -4,7 +4,7 @@
 
 > DevOps × AI Agent Hackathon 2026 提出作品
 
-![CI](https://github.com/OWNER/cloudmedic/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/liuxi4048-crypto/cloudmedic/actions/workflows/ci.yml/badge.svg)
 
 ## 🚑 何をするプロダクトか
 
