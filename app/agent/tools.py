@@ -190,6 +190,7 @@ class ToolExecutor:
                 }
 
         result = self.ctx.patient.treat(action)
+        self.incident.last_treatment_at = time.time()
         ev = self.incident.add_event(
             "treatment",
             f"処置を実行: {action}",
@@ -203,9 +204,10 @@ class ToolExecutor:
     async def _tool_verify_recovery(self, wait_seconds: float = 8) -> dict:
         wait = min(float(wait_seconds), self.ctx.settings.max_verify_wait_seconds)
         await asyncio.sleep(wait)
-        vitals = self.ctx.patient.vitals(
-            window_seconds=self.ctx.settings.verify_window_seconds,
-        )
+        # 観測窓は待機時間内に収め、処置前のサンプルが混入して
+        # 「未回復」と誤判定しないようにする
+        window = min(self.ctx.settings.verify_window_seconds, max(wait, 1.0))
+        vitals = self.ctx.patient.vitals(window_seconds=window)
         recovered = (
             vitals["error_rate_pct"] < 5
             and vitals["p95_latency_ms"] < 800

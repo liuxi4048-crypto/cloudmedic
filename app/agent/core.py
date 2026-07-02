@@ -71,8 +71,13 @@ class MedicAgent:
             self._emit(incident, "error", f"エージェント実行エラー: {e}",
                        traceback.format_exc()[-1500:])
 
-        # 終了処理
-        vitals = self.ctx.patient.vitals(window_seconds=self.ctx.settings.verify_window_seconds)
+        # 終了処理（観測窓は最後の処置以降に限定し、処置前のサンプル混入による
+        # 誤判定を避ける）
+        window = self.ctx.settings.verify_window_seconds
+        if incident.last_treatment_at is not None:
+            since_treatment = time.time() - incident.last_treatment_at
+            window = max(1.0, min(window, since_treatment))
+        vitals = self.ctx.patient.vitals(window_seconds=window)
         recovered = vitals["status"] == "healthy" and not self.ctx.patient.active_faults
         incident.status = "recovered" if recovered else "failed"
         incident.resolved_at = time.time()

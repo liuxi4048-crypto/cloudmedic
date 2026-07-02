@@ -52,6 +52,7 @@ class Incident(BaseModel):
     trigger: dict = Field(default_factory=dict)
     events: list[AgentEvent] = Field(default_factory=list)
     postmortem: str | None = None
+    last_treatment_at: float | None = None
 
     def add_event(self, type: AgentEventType, title: str, detail: Any = None) -> AgentEvent:
         ev = AgentEvent(type=type, title=title, detail=detail)
